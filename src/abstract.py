@@ -1,7 +1,15 @@
 from abc import ABC, abstractmethod
 
-class VacancyAPI(ABC):
+"""Абстрактный класс должен быть интерфейсом для всех платформ, с которых мы будем собирать вакансии. В нем будут 
+определены методы, которые необходимо реализовать в каждом конкретном классе-платформе, например, для hh.ru."""
+
+class JobPlatformAPI(ABC):
     @abstractmethod
-    def fetch_vacancies(self, query: str, area: str = "1"):
-        """Получить вакансии по запросу"""
+    def connect(self):
+        """Метод для подключения к API платформы"""
+        pass
+
+    @abstractmethod
+    def get_vacancies(self, search_query: str, page: int = 1):
+        """Метод для получения списка вакансий по поисковому запросу"""
         pass
