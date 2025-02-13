@@ -19,10 +19,9 @@ class HHJobPlatform(JobPlatformAPI):
             print(f"Ошибка подключения: {e}")
             return False
 
-    def get_vacancies(self, search_query: str, page: int = 1, area: int =1):
+    def get_vacancies(self, search_query: str):
         """Получаем вакансии с платформы hh.ru"""
-        params = {'text': search_query, 'page': page, 'area': area}
-        # params = {'text': search_query, 'page': page, 'per_page': per_page, 'area': area}
+        params = {'text': search_query}
         response = requests.get(self.base_url, params=params)
         if response.status_code == 200:
             return response.json()['items']
@@ -36,13 +35,6 @@ if __name__ == "__main__":
     hh_url = url_ex.base_url
     print(hh_url)
 
-    response = url_ex.get_vacancies("Электрик", 12, 3)
+    response = url_ex.get_vacancies("Электрик")
     print(response)
-    # status = response.status_code
-    # result = response.text
-    # print(status)
-    # print(result)
-    #
-    # class_url = HhApi()
-    #
-    # response_2 = class_url.fetch_vacancies()
+

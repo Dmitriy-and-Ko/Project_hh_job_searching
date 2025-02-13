@@ -1,4 +1,5 @@
-import re
+import requests
+from api_hh import HHJobPlatform
 
 """Класс, который будет представлять вакансию с атрибутами, такими как название, ссылка, зарплата, описание, 
 а также методы для сравнения вакансий по зарплате и валидации данных."""
@@ -31,3 +32,19 @@ class Vacancy:
     def __gt__(self, other):
         """Сравнение вакансий по максимальной зарплате"""
         return (self.salary_from + self.salary_to) / 2 > (other.salary_from + other.salary_to) / 2
+
+if __name__ == '__main__':
+    hh_platform = HHJobPlatform()
+    vacancies = hh_platform.get_vacancies('Разработчик')
+    storage = list()
+    vacation_list_of_dictionary = []
+    for vacancy in vacancies:
+        v = Vacancy(vacancy.get("name"), vacancy.get("url"), vacancy.get('salary_from'), vacancy.get("salary_to"),
+                    vacancy.get("description"))
+        storage.append(v)
+    for vacancy_object in storage:
+        dict_vacancy_object = {"name": vacancy_object.name, 'url': vacancy_object.url,
+                               "salary_from": vacancy_object.salary_from, "salary_to": vacancy_object.salary_to,
+                               "description": vacancy_object.description}
+        vacation_list_of_dictionary.append(dict_vacancy_object)
+    print(vacation_list_of_dictionary)
