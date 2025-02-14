@@ -33,18 +33,46 @@ class Vacancy:
         """Сравнение вакансий по максимальной зарплате"""
         return (self.salary_from + self.salary_to) / 2 > (other.salary_from + other.salary_to) / 2
 
+    @staticmethod
+    def from_platform(platform_data):
+        """Метод для формирования списка вакансий из данных платформы"""
+        vacancies = []
+        for job_data in platform_data:
+            # Извлекаем необходимые данные из вложенных словарей с проверками на None
+            name = job_data.get('name', 'Название не указано')
+            url = job_data.get('apply_alternate_url', '')  # Например, можно взять альтернативный URL отклика
+
+            # Извлекаем данные по зарплате, добавляем проверку на None
+            salary_from = job_data.get('salary', {}).get('from', 0) if job_data.get('salary') else 0
+            salary_to = job_data.get('salary', {}).get('to', 0) if job_data.get('salary') else 0
+
+            # Извлекаем описание из department с дополнительной проверкой на None
+            department = job_data.get('department')
+            description = department.get('name', 'Описание не указано') if department else 'Описание не указано'
+
+            # Создаем объект Vacancy с полученными данными
+            vacancy = Vacancy(
+                name=name,
+                url=url,
+                salary_from=salary_from,
+                salary_to=salary_to,
+                description=description
+            )
+            vacancies.append(vacancy)
+        return vacancies
+
+
 if __name__ == '__main__':
-    hh_platform = HHJobPlatform()
-    vacancies = hh_platform.get_vacancies('Разработчик')
-    storage = list()
-    vacation_list_of_dictionary = []
-    for vacancy in vacancies:
-        v = Vacancy(vacancy.get("name"), vacancy.get("url"), vacancy.get('salary_from'), vacancy.get("salary_to"),
-                    vacancy.get("description"))
-        storage.append(v)
-    for vacancy_object in storage:
-        dict_vacancy_object = {"name": vacancy_object.name, 'url': vacancy_object.url,
-                               "salary_from": vacancy_object.salary_from, "salary_to": vacancy_object.salary_to,
-                               "description": vacancy_object.description}
-        vacation_list_of_dictionary.append(dict_vacancy_object)
-    print(vacation_list_of_dictionary)
+    platform = HHJobPlatform()
+
+    # Проверяем подключение
+    if platform.connect():
+        # Получаем вакансии с платформы по запросу
+        platform_data = platform.get_vacancies("python разработчик")
+
+        # Преобразуем данные вакансий в экземпляры класса Vacancy
+        vacancies = Vacancy.from_platform(platform_data)
+
+        # Выводим вакансии
+        for vacancy in vacancies:
+            print(vacancy)

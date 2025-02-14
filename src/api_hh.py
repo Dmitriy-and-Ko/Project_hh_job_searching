@@ -30,6 +30,8 @@ class HHJobPlatform(JobPlatformAPI):
             return []
 
 
+
+
 if __name__ == "__main__":
     url_ex = HHJobPlatform()
     hh_url = url_ex.base_url
