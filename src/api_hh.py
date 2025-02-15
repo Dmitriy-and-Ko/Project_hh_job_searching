@@ -37,6 +37,6 @@ if __name__ == "__main__":
     hh_url = url_ex.base_url
     print(hh_url)
 
-    response = url_ex.get_vacancies("Электрик")
+    response = url_ex.get_vacancies("Разработчик")
     print(response)
 
