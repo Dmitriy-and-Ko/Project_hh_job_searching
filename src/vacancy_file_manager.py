@@ -1,11 +1,9 @@
-
-from src.vacancy import Vacancy
-from typing import List, Dict
-from pathlib import Path
 import json
 from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Dict, List
 
-
+from src.vacancy import Vacancy
 
 """Абстрактный класс для работы с файлами, который позволит сохранять вакансии, читать их и удалять. 
 Реализуем его для работы с JSON."""
@@ -33,14 +31,14 @@ class JSONVacancyStorage(VacancyStorage):
 
     def _load_data(self):
         try:
-            with open(self.file_path, 'r', encoding='utf-8') as file:
+            with open(self.file_path, "r", encoding="utf-8") as file:
                 content = file.read().strip()
                 return json.loads(content) if content else []  # Загружаем только если не пусто
         except FileNotFoundError:
             return []
 
     def _save_data(self, data):
-        with open(self.file_path, 'w', encoding='utf-8') as file:
+        with open(self.file_path, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
 
     def add_vacancies(self, vacancies: List[Vacancy]):
@@ -61,52 +59,3 @@ class JSONVacancyStorage(VacancyStorage):
         data = self._load_data()
         data = [item for item in data if not all(item.get(key) == value for key, value in criteria.items())]
         self._save_data(data)
-
-
-
-if __name__ == "__main__":
-    storage = JSONVacancyStorage("C:/Users/user/OneDrive/Desktop/my-prj/Project_job_seerch/data/hh_vacancies.json")
-    print(storage.file_path)
-
-    # Очистим файл перед тестом
-    storage._save_data([])
-
-    # Добавляем несколько вакансий
-    vacancy1 = Vacancy("Python Developer", "https://example.com/1", 100000, 120000, "Разработка приложений")
-    vacancy2 = Vacancy("Data Scientist", "https://example.com/2", 150000, 200000, "Анализ данных")
-    vacancy3 = Vacancy("Python Developer", "https://example.com/3", 130000, 150000, "Работа с данными")
-
-    storage.add_vacancies([vacancy1, vacancy2, vacancy3])
-    print("Вакансии добавлены.")
-
-    # Проверяем get_vacancies без критериев
-    print("\nВсе вакансии:")
-    print(storage.get_vacancies({}))
-
-    # Фильтр по названию
-    print("\nВакансии с названием 'Python Developer':")
-    print(storage.get_vacancies({"title": "Python Developer"}))
-
-    # Фильтр по зарплате
-    print("\nВакансии с зарплатой от 150000:")
-    print(storage.get_vacancies({"salary_from": 150000}))
-
-    # Фильтр по URL
-    print("\nВакансия с URL 'https://example.com/2':")
-    print(storage.get_vacancies({"url": "https://example.com/2"}))
-
-    # Удаляем вакансию 'Python Developer'
-    storage.delete_vacancies({"title": "Python Developer"})
-    print("\nПосле удаления вакансии 'Python Developer':")
-    print(storage.get_vacancies({}))
-
-    # Удаляем вакансию 'Data Scientist'
-    storage.delete_vacancies({"title": "Data Scientist"})
-    print("\nПосле удаления вакансии 'Data Scientist':")
-    print(storage.get_vacancies({}))
-
-    # Пытаемся удалить несуществующую вакансию
-    storage.delete_vacancies({"title": "Frontend Developer"})
-    print("\nПосле попытки удаления несуществующей вакансии 'Frontend Developer':")
-    print(storage.get_vacancies({}))
-

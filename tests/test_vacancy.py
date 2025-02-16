@@ -1,4 +1,5 @@
 import pytest
+
 from src.vacancy import Vacancy
 
 
@@ -11,15 +12,18 @@ def test_vacancy_init(vacancy_Python_developer):
     assert vacancy_Python_developer.salary_to == 120000
     assert vacancy_Python_developer.description == "Разработка и поддержка, back end части веб-приложений."
 
+
 def test_create_vacancy_without_name(vacancy_without_name):
     """Тест на создание вакансии с отсутствием названия."""
     with pytest.raises(ValueError, match="Название вакансии и URL обязательны."):
         Vacancy(**vacancy_without_name)
 
+
 def test_create_vacancy_without_url(vacancy_without_url):
     """Тест на создание вакансии с отсутствием названия."""
     with pytest.raises(ValueError, match="Название вакансии и URL обязательны."):
         Vacancy(**vacancy_without_url)
+
 
 def test_create_vacancy_negative_salary(vacancy_with_negative_salary):
     """Тест на создание вакансии с отрицательной зарплатой."""
@@ -30,7 +34,10 @@ def test_create_vacancy_negative_salary(vacancy_with_negative_salary):
 def test_str_method(vacancy_Python_developer):
     """Тест на метод __str__."""
 
-    assert str(vacancy_Python_developer) == "Вакансия: Python_developer, Зарплата: 100000-120000, URL: https://hh.ru/applicant/vacancy_response?vacancyId=117286365"
+    assert (
+        str(vacancy_Python_developer)
+        == "Вакансия: Python_developer, Зарплата: 100000-120000, URL: https://hh.ru/applicant/vacancy_response?vacancyId=117286365"
+    )
 
 
 def test_vacancy_comparison_lt(vacancy_Python_developer, vacancy_system_administrator):
@@ -70,6 +77,7 @@ def test_from_platform(platform_data):
     assert vacancies[1].salary_to == 100000
     assert vacancies[1].description == "Отдел тестирования"
 
+
 # Тестирование метода __str__
 def test_vacancy_str_method(capsys, vacancy_Python_developer):
     """Тест метода __str__ класса Vacancy с использованием capsys."""
@@ -78,14 +86,15 @@ def test_vacancy_str_method(capsys, vacancy_Python_developer):
     expected_output = "Вакансия: Python_developer, Зарплата: 100000-120000, URL: https://hh.ru/applicant/vacancy_response?vacancyId=117286365\n"
     assert captured.out == expected_output
 
+
 # Тестирование метода __lt__ (меньше)
 def test_vacancy_comparison_lt(vacancy_Python_developer, vacancy_system_administrator):
     """Тест оператора < (__lt__) для сравнения вакансий по средней зарплате."""
     assert vacancy_system_administrator < vacancy_Python_developer
     assert not vacancy_Python_developer < vacancy_system_administrator
 
+
 # Тестирование метода validate (с отрицательной зарплатой)
 def test_validate_invalid_salary():
     with pytest.raises(ValueError, match="Зарплата не может быть меньше 0."):
         vacancy = Vacancy(name="Программист Python", url="https://example.com", salary_from=-100000)
-
