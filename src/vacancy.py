@@ -1,5 +1,5 @@
 import requests
-from api_hh import HHJobPlatform
+from src.api_hh import HHJobPlatform
 
 """Класс, который будет представлять вакансию с атрибутами, такими как название, ссылка, зарплата, описание, 
 а также методы для сравнения вакансий по зарплате и валидации данных."""
@@ -76,3 +76,12 @@ if __name__ == '__main__':
         # Выводим вакансии
         for vacancy in vacancies:
             print(vacancy)
+        print(type(vacancy))
+
+    # vacancy_developer = Vacancy(name="Python_developer",
+    #     url="https://hh.ru/applicant/vacancy_response?vacancyId=117286365",
+    #     salary_from=100000,
+    #     salary_to=120000,
+    #     description="Разработка и поддержка, back end части веб-приложений.")
+    #
+    # print(vacancy_developer.__str__())

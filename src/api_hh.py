@@ -1,5 +1,5 @@
 import requests
-from abstract import JobPlatformAPI
+from src.abstract import JobPlatformAPI
 
 """Kласс, который будет наследовать JobPlatformAPI и реализовывать методы для получения данных с 
 платформы hh.ru."""
@@ -39,4 +39,5 @@ if __name__ == "__main__":
 
     response = url_ex.get_vacancies("Разработчик")
     print(response)
+    print(type(response))
 

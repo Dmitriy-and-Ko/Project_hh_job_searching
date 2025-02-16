@@ -1,8 +1,9 @@
 import json
 from typing import List
-from vacancy import Vacancy
-
-
+from src.vacancy import Vacancy
+from typing import List, Dict
+from src.view import PATH_TO_FILE
+from pathlib import Path
 import json
 from abc import ABC, abstractmethod
 
@@ -10,52 +11,79 @@ from abc import ABC, abstractmethod
 Реализуем его для работы с JSON."""
 
 
-class JobFileStorage(ABC):
+class VacancyStorage(ABC):
     @abstractmethod
-    def add_vacancy(self, vacancy: Vacancy):
-        """Добавить вакансию в файл"""
+    def add_vacancies(self, vacancies: List[Vacancy]):
         pass
 
     @abstractmethod
-    def get_vacancies(self, search_query: str):
-        """Получить вакансии по запросу"""
+    def get_vacancies(self, criteria: Dict):
         pass
 
     @abstractmethod
-    def remove_vacancy(self, vacancy_url: str):
-        """Удалить вакансию по URL"""
+    def delete_vacancies(self, criteria: Dict):
         pass
 
 
-class JSONJobFileStorage(JobFileStorage):
-    def __init__(self, file_path):
+class JSONVacancyStorage(VacancyStorage):
+    def __init__(self, file_path=PATH_TO_FILE):
         self.file_path = file_path
 
     def _load_data(self):
-        """Загрузить данные из файла"""
         try:
-            with open(self.file_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+            with open(self.file_path, 'r', encoding='utf-8') as file:
+                return json.load(file)
         except FileNotFoundError:
-            return []
-        except json.JSONDecodeError:
             return []
 
     def _save_data(self, data):
-        """Сохранить данные в файл"""
-        with open(self.file_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+        with open(self.file_path, 'w', encoding='utf-8') as file:
+            json.dump(data, file, ensure_ascii=False, indent=4)
 
-    def add_vacancy(self, vacancy: Vacancy):
+    def add_vacancies(self, vacancies: List[Vacancy]):
         data = self._load_data()
-        data.append(vacancy.__dict__)
+        for vacancy in vacancies:
+            data.append(vacancy.__dict__)
         self._save_data(data)
 
-    def get_vacancies(self, search_query: str):
+    def get_vacancies(self, criteria: Dict):
         data = self._load_data()
-        return [Vacancy(**vacancy) for vacancy in data if search_query.lower() in vacancy["name"].lower()]
+        result = []
+        for item in data:
+            if all(item.get(key) == value for key, value in criteria.items()):
+                result.append(item)
+        return result
 
-    def remove_vacancy(self, vacancy_url: str):
+    def delete_vacancies(self, criteria: Dict):
         data = self._load_data()
-        data = [vacancy for vacancy in data if vacancy["url"] != vacancy_url]
+        data = [item for item in data if not all(item.get(key) == value for key, value in criteria.items())]
         self._save_data(data)
+
+
+if __name__ == "__main__":
+    storage = JSONVacancyStorage("vacancies.json")
+
+    vacancy1 = Vacancy("Python Developer", "https://example.com/1", 100000, 120000, "Разработка приложений")
+    vacancy2 = Vacancy("Data Scientist", "https://example.com/2", 150000, 200000, "Анализ данных")
+
+    # Добавляем вакансии
+    storage.add_vacancies([vacancy1, vacancy2])
+    print("Вакансии добавлены")
+
+    # Получаем все вакансии
+    print("Все вакансии:")
+    print(storage.get_vacancies({}))
+
+    # Фильтруем вакансии по названию
+    print("Вакансии с названием Python Developer:")
+    print(storage.get_vacancies({"name": "Python Developer"}))
+
+    # Удаляем вакансию
+    storage.delete_vacancies({"name": "Python Developer"})
+    print("После удаления вакансии Python Developer:")
+    print(storage.get_vacancies({}))
+
+    # Удаляем тестовый файл
+    import os
+
+    os.remove("vacancies_test.json")

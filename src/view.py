@@ -1,48 +1,56 @@
 from vacancy import Vacancy
-from vacancy_file_manager import JSONJobFileStorage
+from vacancy_file_manager import JSONVacancyStorage
 from src.api_hh import HHJobPlatform
+from pathlib import Path
+
+PATH_DIR = Path(__file__).parent.parent
+PATH_TO_FILE = Path(PATH_DIR, 'data', 'hh_vacancies.json')
 
 """Функция для взаимодействия с пользователем через консоль, которая будет запрашивать данные,
  отображать результаты и позволять фильтровать вакансии."""
 
 
 def user_interaction():
-    hh_platform = HHJobPlatform()
-    if not hh_platform.connect():
+    platform = HHJobPlatform()
+    storage = JSONVacancyStorage()
+
+    if not platform.connect():
+        print("Не удалось подключиться к API hh.ru")
         return
 
-    storage = JSONJobFileStorage('vacancies.json')
-
     while True:
-        print("\nМеню:")
-        print("1. Поиск вакансий")
-        print("2. Топ N вакансий по зарплате")
-        print("3. Вакансии с ключевым словом в описании")
+        print("\n1. Ввести поисковый запрос")
+        print("2. Получить топ N вакансий по зарплате")
+        print("3. Найти вакансии по ключевому слову в описании")
         print("4. Выход")
+
         choice = input("Выберите действие: ")
 
-        if choice == "1":
-            search_query = input("Введите поисковый запрос: ")
-            vacancies = hh_platform.get_vacancies(search_query)
-            for vacancy in vacancies:
-                v = Vacancy(vacancy["name"], vacancy["url"], vacancy["salary_from"], vacancy["salary_to"],
-                            vacancy["description"])
-                storage.add_vacancy(v)
-            print(f"Найдено {len(vacancies)} вакансий.")
+        if choice == '1':
+            query = input("Введите поисковый запрос: ")
+            vacancies = platform.get_vacancies(query)
+            vacancies_list = Vacancy.from_platform(vacancies)
+            storage.add_vacancies(vacancies_list)
+            print(f"Добавлено {len(vacancies_list)} вакансий.")
 
-        elif choice == "2":
-            N = int(input("Введите количество вакансий для отображения: "))
-            vacancies = storage.get_vacancies("")
-            vacancies.sort(reverse=True)
-            for v in vacancies[:N]:
-                print(v)
+        elif choice == '2':
+            n = int(input("Сколько вакансий вывести?: "))
+            data = storage._load_data()
+            sorted_vacancies = sorted(data, key=lambda x: (x['salary_from'] + x['salary_to']) / 2, reverse=True)
+            for vacancy in sorted_vacancies[:n]:
+                print(vacancy)
 
-        elif choice == "3":
-            keyword = input("Введите ключевое слово для поиска в описаниях: ")
-            vacancies = storage.get_vacancies(keyword)
-            for v in vacancies:
-                print(v)
+        elif choice == '3':
+            keyword = input("Введите ключевое слово: ")
+            data = storage._load_data()
+            filtered = [v for v in data if keyword.lower() in v['description'].lower()]
+            for vacancy in filtered:
+                print(vacancy)
 
-        elif choice == "4":
+        elif choice == '4':
             break
+
+        else:
+            print("Неверный выбор, попробуйте снова.")
+
 
