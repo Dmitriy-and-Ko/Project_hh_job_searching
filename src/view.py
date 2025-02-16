@@ -1,10 +1,6 @@
-from vacancy import Vacancy
-from vacancy_file_manager import JSONVacancyStorage
+from src.vacancy import Vacancy
+from src.vacancy_file_manager import JSONVacancyStorage
 from src.api_hh import HHJobPlatform
-from pathlib import Path
-
-PATH_DIR = Path(__file__).parent.parent
-PATH_TO_FILE = Path(PATH_DIR, 'data', 'hh_vacancies.json')
 
 """Функция для взаимодействия с пользователем через консоль, которая будет запрашивать данные,
  отображать результаты и позволять фильтровать вакансии."""

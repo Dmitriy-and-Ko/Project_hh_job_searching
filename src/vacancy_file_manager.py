@@ -1,11 +1,11 @@
-import json
-from typing import List
+
 from src.vacancy import Vacancy
 from typing import List, Dict
-from src.view import PATH_TO_FILE
 from pathlib import Path
 import json
 from abc import ABC, abstractmethod
+
+
 
 """Абстрактный класс для работы с файлами, который позволит сохранять вакансии, читать их и удалять. 
 Реализуем его для работы с JSON."""
@@ -26,13 +26,16 @@ class VacancyStorage(ABC):
 
 
 class JSONVacancyStorage(VacancyStorage):
-    def __init__(self, file_path=PATH_TO_FILE):
-        self.file_path = file_path
+    def __init__(self, file_path):
+        self.file_path = Path(file_path)
+        if not self.file_path.exists():
+            self._save_data([])  # Создаём пустой JSON, если файла нет
 
     def _load_data(self):
         try:
             with open(self.file_path, 'r', encoding='utf-8') as file:
-                return json.load(file)
+                content = file.read().strip()
+                return json.loads(content) if content else []  # Загружаем только если не пусто
         except FileNotFoundError:
             return []
 
@@ -43,7 +46,7 @@ class JSONVacancyStorage(VacancyStorage):
     def add_vacancies(self, vacancies: List[Vacancy]):
         data = self._load_data()
         for vacancy in vacancies:
-            data.append(vacancy.__dict__)
+            data.append(vacancy.to_dict())  # Используем метод to_dict() у класса Vacancy
         self._save_data(data)
 
     def get_vacancies(self, criteria: Dict):
@@ -60,30 +63,50 @@ class JSONVacancyStorage(VacancyStorage):
         self._save_data(data)
 
 
-if __name__ == "__main__":
-    storage = JSONVacancyStorage("vacancies.json")
 
+if __name__ == "__main__":
+    storage = JSONVacancyStorage("C:/Users/user/OneDrive/Desktop/my-prj/Project_job_seerch/data/hh_vacancies.json")
+    print(storage.file_path)
+
+    # Очистим файл перед тестом
+    storage._save_data([])
+
+    # Добавляем несколько вакансий
     vacancy1 = Vacancy("Python Developer", "https://example.com/1", 100000, 120000, "Разработка приложений")
     vacancy2 = Vacancy("Data Scientist", "https://example.com/2", 150000, 200000, "Анализ данных")
+    vacancy3 = Vacancy("Python Developer", "https://example.com/3", 130000, 150000, "Работа с данными")
 
-    # Добавляем вакансии
-    storage.add_vacancies([vacancy1, vacancy2])
-    print("Вакансии добавлены")
+    storage.add_vacancies([vacancy1, vacancy2, vacancy3])
+    print("Вакансии добавлены.")
 
-    # Получаем все вакансии
-    print("Все вакансии:")
+    # Проверяем get_vacancies без критериев
+    print("\nВсе вакансии:")
     print(storage.get_vacancies({}))
 
-    # Фильтруем вакансии по названию
-    print("Вакансии с названием Python Developer:")
-    print(storage.get_vacancies({"name": "Python Developer"}))
+    # Фильтр по названию
+    print("\nВакансии с названием 'Python Developer':")
+    print(storage.get_vacancies({"title": "Python Developer"}))
 
-    # Удаляем вакансию
-    storage.delete_vacancies({"name": "Python Developer"})
-    print("После удаления вакансии Python Developer:")
+    # Фильтр по зарплате
+    print("\nВакансии с зарплатой от 150000:")
+    print(storage.get_vacancies({"salary_from": 150000}))
+
+    # Фильтр по URL
+    print("\nВакансия с URL 'https://example.com/2':")
+    print(storage.get_vacancies({"url": "https://example.com/2"}))
+
+    # Удаляем вакансию 'Python Developer'
+    storage.delete_vacancies({"title": "Python Developer"})
+    print("\nПосле удаления вакансии 'Python Developer':")
     print(storage.get_vacancies({}))
 
-    # Удаляем тестовый файл
-    import os
+    # Удаляем вакансию 'Data Scientist'
+    storage.delete_vacancies({"title": "Data Scientist"})
+    print("\nПосле удаления вакансии 'Data Scientist':")
+    print(storage.get_vacancies({}))
 
-    os.remove("vacancies_test.json")
+    # Пытаемся удалить несуществующую вакансию
+    storage.delete_vacancies({"title": "Frontend Developer"})
+    print("\nПосле попытки удаления несуществующей вакансии 'Frontend Developer':")
+    print(storage.get_vacancies({}))
+

@@ -61,6 +61,15 @@ class Vacancy:
             vacancies.append(vacancy)
         return vacancies
 
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "url": self.url,
+            "salary_from": self.salary_from,
+            "salary_to": self.salary_to,
+            "description": self.description
+        }
+
 
 if __name__ == '__main__':
     platform = HHJobPlatform()
