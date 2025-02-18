@@ -1,11 +1,13 @@
+from typing import Dict, List
+
 """Класс, который будет представлять вакансию с атрибутами, такими как название, ссылка, зарплата, описание,
 а также методы для сравнения вакансий по зарплате и валидации данных."""
 
 
 class Vacancy:
-    __slots__ = ['name', 'url', 'salary_from', 'salary_to', 'description']
+    __slots__ = ["name", "url", "salary_from", "salary_to", "description"]
 
-    def __init__(self, name, url, salary_from=None, salary_to=None, description=None):
+    def __init__(self, name, url, salary_from=None, salary_to=None, description=None) -> None:
         self.name = name
         self.url = url
         self.salary_from = salary_from if salary_from is not None else 0
@@ -15,7 +17,7 @@ class Vacancy:
         # Валидация данных
         self._validate()
 
-    def _validate(self):
+    def _validate(self) -> None:
         """Приватный метод для валидации данных вакансии"""
         if not self.name or not self.url:
             raise ValueError("Название вакансии и URL обязательны.")
@@ -24,20 +26,20 @@ class Vacancy:
         if self.salary_from > self.salary_to:
             raise ValueError("Минимальная зарплата не может быть больше максимальной.")
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Возвращает строковое представление объекта Vacancy."""
         return f"Вакансия: {self.name}, Зарплата: {self.salary_from}-{self.salary_to}, URL: {self.url}"
 
-    def __lt__(self, other):
+    def __lt__(self, other: "Vacancy") -> bool:
         """Сравнение вакансий по минимальной зарплате"""
         return (self.salary_from + self.salary_to) / 2 < (other.salary_from + other.salary_to) / 2
 
-    def __gt__(self, other):
+    def __gt__(self, other: "Vacancy") -> bool:
         """Сравнение вакансий по максимальной зарплате"""
         return (self.salary_from + self.salary_to) / 2 > (other.salary_from + other.salary_to) / 2
 
     @staticmethod
-    def from_platform(platform_data):
+    def from_platform(platform_data: List[Dict]) -> List:
         """Метод для формирования списка вакансий из данных платформы"""
         vacancies = []
         for job_data in platform_data:
@@ -60,7 +62,7 @@ class Vacancy:
             vacancies.append(vacancy)
         return vacancies
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
         """Преобразует экземпляр класса Vacancy в словарь"""
         return {
             "name": self.name,

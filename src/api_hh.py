@@ -1,19 +1,18 @@
-from typing import List, Dict
+from typing import Dict, List
 
 import requests
 
 from src.abstract import JobPlatformAPI
-
 
 """Kласс, который будет наследовать JobPlatformAPI и реализовывать методы для получения данных с 
 платформы hh.ru."""
 
 
 class HHJobPlatform(JobPlatformAPI):
-    def __init__(self, base_url="https://api.hh.ru/vacancies"):
+    def __init__(self, base_url="https://api.hh.ru/vacancies") -> None:
         self.base_url = base_url
 
-    def connect(self):
+    def connect(self) -> bool:
         """Метод проверяющий доступность API"""
         try:
             response = requests.get(self.base_url)
@@ -25,10 +24,7 @@ class HHJobPlatform(JobPlatformAPI):
 
     def get_vacancies(self, search_query: str, per_page: int = 20) -> List[Dict]:
         """Получаем вакансии с платформы hh.ru по заданному запросу и количеству на страницу."""
-        params = {
-            "text": search_query,
-            "per_page": per_page
-        }
+        params = {"text": search_query, "per_page": per_page}
         try:
             response = requests.get(self.base_url, params=params)
             response.raise_for_status()

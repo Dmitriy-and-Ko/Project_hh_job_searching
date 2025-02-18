@@ -1,3 +1,5 @@
+from typing import NoReturn
+
 from src.api_hh import HHJobPlatform
 from src.vacancy import Vacancy
 from src.vacancy_file_manager import JSONVacancyStorage
@@ -6,7 +8,7 @@ from src.vacancy_file_manager import JSONVacancyStorage
  отображать результаты и позволять фильтровать вакансии."""
 
 
-def user_interaction():
+def user_interaction() -> NoReturn:
     platform = HHJobPlatform()
     storage = JSONVacancyStorage("C:/Users/user/OneDrive/Desktop/my-prj/Project_job_seerch/data/hh_vacancies.json")
 
