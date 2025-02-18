@@ -32,9 +32,10 @@ def user_interaction():
         elif choice == "2":
             n = int(input("Сколько вакансий вывести?: "))
             data = storage._load_data()
-            sorted_vacancies = sorted(data, key=lambda x: (x["salary_from"] + x["salary_to"]) / 2, reverse=True)
+            vacancies_list = [Vacancy(**vacancy) for vacancy in data]  # Преобразуем словари в объекты Vacancy
+            sorted_vacancies = sorted(vacancies_list, key=lambda x: (x.salary_from + x.salary_to) / 2, reverse=True)
             for vacancy in sorted_vacancies[:n]:
-                print(vacancy)
+                print(vacancy.__str__())
 
         elif choice == "3":
             keyword = input("Введите ключевое слово: ")
