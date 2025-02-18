@@ -58,6 +58,12 @@ def vacancy_with_negative_salary():
 
 
 @pytest.fixture()
+def vacancy_with_salary_to_less_salary_from():
+    """Фикстура, возвращающая данные для создания вакансии, где зарплата - отрицательное число."""
+    return {"name": "Бухгалтер", "url": "https://hh.com/job3", "salary_from": 120000, "salary_to": 100000}
+
+
+@pytest.fixture()
 def platform_data():
     """Фикстура с данными, которые возвращает платформа."""
     return [

@@ -31,6 +31,12 @@ def test_create_vacancy_negative_salary(vacancy_with_negative_salary):
         Vacancy(**vacancy_with_negative_salary)
 
 
+def test_create_vacancy_where_salary_to_more_salary_from(vacancy_with_salary_to_less_salary_from):
+    """Тест на создание вакансии с зарплатой от больше чем зарплата до."""
+    with pytest.raises(ValueError, match="Минимальная зарплата не может быть больше максимальной."):
+        Vacancy(**vacancy_with_salary_to_less_salary_from)
+
+
 def test_str_method(vacancy_Python_developer):
     """Тест на метод __str__."""
 

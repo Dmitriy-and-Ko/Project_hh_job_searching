@@ -3,6 +3,8 @@
 
 
 class Vacancy:
+    __slots__ = ['name', 'url', 'salary_from', 'salary_to', 'description']
+
     def __init__(self, name, url, salary_from=None, salary_to=None, description=None):
         self.name = name
         self.url = url
@@ -11,14 +13,16 @@ class Vacancy:
         self.description = description or "Описание не указано"
 
         # Валидация данных
-        self.validate()
+        self._validate()
 
-    def validate(self):
-        """Метод для валидации данных вакансии"""
+    def _validate(self):
+        """Приватный метод для валидации данных вакансии"""
         if not self.name or not self.url:
             raise ValueError("Название вакансии и URL обязательны.")
         if self.salary_from < 0 or self.salary_to < 0:
             raise ValueError("Зарплата не может быть меньше 0.")
+        if self.salary_from > self.salary_to:
+            raise ValueError("Минимальная зарплата не может быть больше максимальной.")
 
     def __str__(self):
         return f"Вакансия: {self.name}, Зарплата: {self.salary_from}-{self.salary_to}, URL: {self.url}"
