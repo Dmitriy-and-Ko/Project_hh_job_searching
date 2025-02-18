@@ -25,6 +25,7 @@ class Vacancy:
             raise ValueError("Минимальная зарплата не может быть больше максимальной.")
 
     def __str__(self):
+        """Возвращает строковое представление объекта Vacancy."""
         return f"Вакансия: {self.name}, Зарплата: {self.salary_from}-{self.salary_to}, URL: {self.url}"
 
     def __lt__(self, other):
@@ -60,6 +61,7 @@ class Vacancy:
         return vacancies
 
     def to_dict(self):
+        """Преобразует экземпляр класса Vacancy в словарь"""
         return {
             "name": self.name,
             "url": self.url,

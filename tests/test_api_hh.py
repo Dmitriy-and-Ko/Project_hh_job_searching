@@ -28,6 +28,7 @@ def test_get_vacancies_success(mock_hh_api):
 
 @patch('requests.get')
 def test_get_vacancies_failure(mock_get, hh_platform):
+    """Тестирование метода get_vacancies класса HHJobPlatform при неудачном запросе."""
     # Мокируем ответ от requests.get
     mock_response = Mock()
     mock_response.status_code = 404

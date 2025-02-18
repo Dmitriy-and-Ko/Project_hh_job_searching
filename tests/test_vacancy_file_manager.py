@@ -7,6 +7,8 @@ from src.vacancy_file_manager import JSONVacancyStorage
 
 
 def test_add_vacancies(temp_json_file, vacancy_Python_developer, vacancy_system_administrator):
+    """Тестирование метода add_vacancies класса JSONVacancyStorage.  Проверяет, что после добавления вакансий в
+    JSON-файл, количество записей соответствует добавленным вакансиям и данные корректно сохраняются."""
     storage = JSONVacancyStorage(temp_json_file)
     storage.add_vacancies([vacancy_Python_developer, vacancy_system_administrator])
 
@@ -19,6 +21,8 @@ def test_add_vacancies(temp_json_file, vacancy_Python_developer, vacancy_system_
 
 
 def test_get_vacancies(temp_json_file, vacancy_Python_developer, vacancy_system_administrator):
+    """Тестирование метода get_vacancies класса JSONVacancyStorage. Проверяет, что метод возвращает корректную вакансию
+    по заданным критериям."""
     storage = JSONVacancyStorage(temp_json_file)
     storage.add_vacancies([vacancy_Python_developer, vacancy_system_administrator])
 
@@ -28,6 +32,8 @@ def test_get_vacancies(temp_json_file, vacancy_Python_developer, vacancy_system_
 
 
 def test_delete_vacancies(temp_json_file, vacancy_Python_developer, vacancy_system_administrator):
+    """Тестирование метода delete_vacancies класса JSONVacancyStorage. Проверяет, что после удаления вакансии по
+    заданным критериям, в JSON-файле остаётся только одна вакансия, которая не соответствует критериям удаления."""
     storage = JSONVacancyStorage(temp_json_file)
     storage.add_vacancies([vacancy_Python_developer, vacancy_system_administrator])
 
@@ -39,6 +45,8 @@ def test_delete_vacancies(temp_json_file, vacancy_Python_developer, vacancy_syst
 
 
 def test_add_invalid_vacancy(temp_json_file, vacancy_with_negative_salary):
+    """Тестирование валидации при добавлении некорректной вакансии в JSONVacancyStorage. Проверяет, что при попытке
+    добавить вакансию с отрицательной зарплатой выбрасывается исключение ValueError."""
     storage = JSONVacancyStorage(temp_json_file)
     with pytest.raises(ValueError):
         storage.add_vacancies([Vacancy(**vacancy_with_negative_salary)])

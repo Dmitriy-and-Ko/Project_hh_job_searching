@@ -14,7 +14,7 @@ class HHJobPlatform(JobPlatformAPI):
         self.base_url = base_url
 
     def connect(self):
-        # Просто проверим доступность API
+        """Метод проверяющий доступность API"""
         try:
             response = requests.get(self.base_url)
             response.raise_for_status()

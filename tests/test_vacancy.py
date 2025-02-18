@@ -5,7 +5,7 @@ from src.vacancy import Vacancy
 
 # Тестирование создания объекта Vacancy
 def test_vacancy_init(vacancy_Python_developer):
-
+    """Тест инициализации экземпляра объекта Vacancy"""
     assert vacancy_Python_developer.name == "Python_developer"
     assert vacancy_Python_developer.url == "https://hh.ru/applicant/vacancy_response?vacancyId=117286365"
     assert vacancy_Python_developer.salary_from == 100000
@@ -20,7 +20,7 @@ def test_create_vacancy_without_name(vacancy_without_name):
 
 
 def test_create_vacancy_without_url(vacancy_without_url):
-    """Тест на создание вакансии с отсутствием названия."""
+    """Тест на создание вакансии с отсутствием url."""
     with pytest.raises(ValueError, match="Название вакансии и URL обязательны."):
         Vacancy(**vacancy_without_url)
 
@@ -102,5 +102,6 @@ def test_vacancy_comparison_lt(vacancy_Python_developer, vacancy_system_administ
 
 # Тестирование метода validate (с отрицательной зарплатой)
 def test_validate_invalid_salary():
+    """Тестирование валидации зарплаты в классе Vacancy."""
     with pytest.raises(ValueError, match="Зарплата не может быть меньше 0."):
         vacancy = Vacancy(name="Программист Python", url="https://example.com", salary_from=-100000)

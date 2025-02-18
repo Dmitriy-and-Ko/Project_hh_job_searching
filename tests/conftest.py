@@ -8,11 +8,13 @@ from src.vacancy import Vacancy
 
 @pytest.fixture()
 def head_hunter_example():
+    """Фикстура экземпляр класса HHJobPlatform"""
     return HHJobPlatform(base_url="https://api.hh.ru/vacancies")
 
 
 @pytest.fixture
 def vacancy_Python_developer():
+    """Фикстура класса Vacancy пайтон разработчик"""
     return Vacancy(
         name="Python_developer",
         url="https://hh.ru/applicant/vacancy_response?vacancyId=117286365",
@@ -24,6 +26,7 @@ def vacancy_Python_developer():
 
 @pytest.fixture
 def vacancy_system_administrator():
+    """Фикстура класса Vacancy системный аналитик"""
     return Vacancy(
         name="Системный администратор",
         url="https://hh.ru/applicant/vacancy_response?vacancyId=112451122",
@@ -84,6 +87,7 @@ def platform_data():
 
 @pytest.fixture
 def temp_json_file(tmp_path):
+    """Фикстура для создания временного JSON-файла в тестах."""
     file = tmp_path / "test_vacancies.json"
     yield file
     if file.exists():

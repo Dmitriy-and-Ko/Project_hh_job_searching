@@ -30,6 +30,7 @@ class JSONVacancyStorage(VacancyStorage):
             self._save_data([])  # Создаём пустой JSON, если файла нет
 
     def _load_data(self):
+        """Приватный метод для загрузки данных из JSON-файла."""
         try:
             with open(self.__file_path, "r", encoding="utf-8") as file:
                 content = file.read().strip()
@@ -42,6 +43,7 @@ class JSONVacancyStorage(VacancyStorage):
 
 
     def _save_data(self, data: List[Dict]):
+        """Приватный метод для сохранения данных в JSON-файл."""
         try:
             with open(self.__file_path, "w", encoding="utf-8") as file:
                 json.dump(data, file, ensure_ascii=False, indent=4)
@@ -50,6 +52,7 @@ class JSONVacancyStorage(VacancyStorage):
 
 
     def add_vacancies(self, vacancies: List[Vacancy]):
+        """Добавляет список вакансий в JSON - файл, избегая дублирования."""
         data = self._load_data()
         for vacancy in vacancies:
             vacancy_dict = vacancy.to_dict()  # Получаем словарь вакансии
@@ -59,6 +62,7 @@ class JSONVacancyStorage(VacancyStorage):
 
 
     def get_vacancies(self, criteria: Dict):
+        """Возвращает список вакансий, которые соответствуют заданным критериям."""
         data = self._load_data()
         result = []
         for item in data:
@@ -68,6 +72,7 @@ class JSONVacancyStorage(VacancyStorage):
 
 
     def delete_vacancies(self, criteria: Dict):
+        """Удаляет вакансии, соответствующие заданным критериям, из JSON-файла."""
         data = self._load_data()
         data = [item for item in data if not all(item.get(key) == value for key, value in criteria.items())]
         self._save_data(data)
