@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 
 def test_hh_api_init(head_hunter_example):
@@ -26,11 +26,19 @@ def test_get_vacancies_success(mock_hh_api):
         assert vacancies[0]["name"] == "Developer"
 
 
-def test_get_vacancies_failure(mock_hh_api):
-    """Тест на неудачное получение вакансий."""
-    with patch("requests.get") as mock_get:
-        # Мокаем неудачный ответ от API
-        mock_get.return_value.status_code = 500
+@patch('requests.get')
+def test_get_vacancies_failure(mock_get, hh_platform):
+    # Мокируем ответ от requests.get
+    mock_response = Mock()
+    mock_response.status_code = 404
+    mock_response.json.return_value = {"items": []}
+    mock_get.return_value = mock_response
 
-        vacancies = mock_hh_api.get_vacancies("developer")
-        assert vacancies == []
+    # Выполняем запрос
+    vacancies = hh_platform.get_vacancies("Python")
+
+    # Проверяем, что метод вернул пустой список
+    assert vacancies == []
+    mock_get.assert_called_once_with(hh_platform.base_url, params={'text': 'Python', 'per_page': 20})
+
+

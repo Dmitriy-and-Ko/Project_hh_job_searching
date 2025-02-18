@@ -82,3 +82,9 @@ def temp_json_file(tmp_path):
     yield file
     if file.exists():
         os.remove(file)
+
+
+@pytest.fixture
+def hh_platform():
+    """Фикстура, создающая экземпляр HHJobPlatform с базовым URL."""
+    return HHJobPlatform()

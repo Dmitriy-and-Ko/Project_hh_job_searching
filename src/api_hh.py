@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 import requests
 
 from src.abstract import JobPlatformAPI
@@ -21,12 +23,16 @@ class HHJobPlatform(JobPlatformAPI):
             print(f"Ошибка подключения: {e}")
             return False
 
-    def get_vacancies(self, search_query: str):
-        """Получаем вакансии с платформы hh.ru"""
-        params = {"text": search_query}
-        response = requests.get(self.base_url, params=params)
-        if response.status_code == 200:
-            return response.json()["items"]
-        else:
-            print(f"Ошибка получения данных: {response.status_code}")
+    def get_vacancies(self, search_query: str, per_page: int = 20) -> List[Dict]:
+        """Получаем вакансии с платформы hh.ru по заданному запросу и количеству на страницу."""
+        params = {
+            "text": search_query,
+            "per_page": per_page
+        }
+        try:
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()
+            return response.json().get("items", [])
+        except Exception as e:
+            print(f"Неизвестная ошибка: {e}")
             return []
